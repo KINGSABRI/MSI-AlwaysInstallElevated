@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- Source: https://github.com/xan7r/Misc/blob/master/alwaysInstallElevated.wxs -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
    <Product 
       Id="*" 
