@@ -13,7 +13,7 @@ A Collection of templates that can be used for abusing window's AlwaysInstallEle
     * a wxs template to embed executable (exe) file into the msi package and execute it during installation.
 
 ### Instructions
-1. Change the first "`ExeCommand" variable to desired command  
+1. Change the first `ExeCommand` variable to desired command  
 2. Download the [WiX Toolset Binaries](https://github.com/wixtoolset/wix3/releases/tag/wix3112rtm)
 3. Compile alwaysInstallElevated.msi by running:  
 &nbsp;&nbsp;&nbsp;&nbsp;`candle alwaysInstallElevated.wxs`  
