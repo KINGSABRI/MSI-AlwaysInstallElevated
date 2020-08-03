@@ -1,0 +1,36 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Product Id='*' UpgradeCode="11111111-2222-3333-4444-555555555555" 
+        Name='My Setup' Language='1033' Version='1.0.0.0' 
+        Manufacturer='Your company'>
+
+    <Package Description='pak' InstallerVersion='200' Compressed='yes' />
+
+    <Media Id='1' Cabinet='setup.cab' EmbedCab='yes' />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+        <Directory Id="TempFolder">
+            <Directory Id="INSTALLLOCATION" Name="~_tmpdir">
+                <Component Id='MyComponent' DiskId='1' Guid=''>
+                    <File Id="File0" Name="setup.exe" Source="setup.exe" /> <!-- Put the executable on the same directory-->
+                </Component>
+            </Directory>
+        </Directory>
+    </Directory>
+
+    <Feature Id='InstallFeature' Title='Install Feature' Level='1'>
+        <ComponentRef Id='MyComponent' />
+    </Feature>
+
+    <!-- Run Action -->
+    <!-- <CustomAction Id="RunWrapExe" Return="ignore" Execute="deferred"  -->
+    <CustomAction Id="RunWrapExe" Return="asyncNoWait" Execute="deferred" 
+                  FileKey="File0" ExeCommand="setup.exe param here"  
+                  HideTarget="no" Impersonate="no" />
+
+    <InstallExecuteSequence>
+        <Custom Action="RunWrapExe" 
+                After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+    </InstallExecuteSequence>
+   </Product>
+</Wix>
