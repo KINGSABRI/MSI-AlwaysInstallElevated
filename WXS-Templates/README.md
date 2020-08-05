@@ -8,6 +8,7 @@ a wxs template to execute system commands.
 a wxs template to execute command then intentionally fails so it won't be registered as an installed program.
 
 **Important Treadcraft:**
+
 Although forcing MSI installation to fail saves us registring the package on the system,
 It leaves a log file `C:\Users\<User>\AppData\Local\Temp\<RandomName>.log*` for that failure on disk exposing details about the msi package
 example: 
