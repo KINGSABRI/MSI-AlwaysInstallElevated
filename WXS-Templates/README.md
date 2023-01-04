@@ -32,6 +32,9 @@ a wxs template to embed executable (exe) file into the msi package and execute i
 a wxs template combines the techniques of `alwaysInstallElevated-2`and `alwaysInstallElevated-3` templates.
 
 
+### ⟿ alwaysInstallElevated-5.wxs
+a wxs template to embed executable (DLL) file into the msi package and execute it (based on its entry function) during installation.
+
 ## Resources 
 * https://stackoverflow.com/questions/854873/how-to-make-an-msi-that-simply-wraps-an-exe-file
 * https://serverfault.com/questions/11670/the-corporate-benefits-of-using-msi-files/274609#274609
